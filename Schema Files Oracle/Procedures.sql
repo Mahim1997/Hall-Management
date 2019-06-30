@@ -1,0 +1,46 @@
+-- counts and save to room table how many students currently resides in it
+CREATE OR REPLACE PROCEDURE proc_Update_Room_StdCount IS
+	curCount INT;
+BEGIN
+	for R in (SELECT TABLE_ROOM.HALL_ID,TABLE_ROOM.ROOM_NO FROM TABLE_ROOM) -- TABLE_ROOM.HALL_ID,TABLE_ROOM.ROOM_NO
+	LOOP
+		
+		SELECT COUNT(*) into curCount
+		FROM TABLE_ROOM_HISTORY
+		WHERE TABLE_ROOM_HISTORY.HALL_ID = R.HALL_ID and TABLE_ROOM_HISTORY.ROOM_NO = R.ROOM_NO and TABLE_ROOM_HISTORY.END_DATE is null;
+
+		UPDATE TABLE_ROOM
+		SET TABLE_ROOM."current no of residents"=curCount
+		WHERE TABLE_ROOM.HALL_ID = R.HALL_ID and TABLE_ROOM.ROOM_NO = R.ROOM_NO;
+		
+	END LOOP;
+	COMMIT;
+END ;
+/
+
+
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE proc_remove_unlistedGuest IS
+BEGIN
+	-- guest log will be deleted by cascade
+	DELETE FROM TABLE_GUEST g
+	WHERE NOT EXISTS (SELECT * FROM TABLE_ALLOWED_GUEST ag WHERE ag.NID = g.NID);
+END;
+/
+
+
+
+
+
+
+
+
+
+create or replace PROCEDURE delete_Applications (stdID IN VARCHAR2) IS
+BEGIN
+    DELETE FROM TABLE_APPLICATION WHERE TABLE_APPLICATION.STUDENT_ID=stdID and lower(TABLE_APPLICATION.STATUS)='pending';
+END;
