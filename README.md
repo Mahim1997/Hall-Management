@@ -1,4 +1,4 @@
-# hall_management
+# Hall Management System
 This project was done for the Level 2 Term 2 Database Sessional Project {Mahim Mahbub, Subangkar Karmaker Shanto}
 
 ### Topics covered in this project
